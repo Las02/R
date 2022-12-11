@@ -1,0 +1,37 @@
+---
+title: "Anchored Links"
+output: 
+  html_document:
+    includes:
+      after_body: anchor.html
+---
+
+# One-way anova
+
+## post hoc comparison
+
+### Confidence interval
+
+![](images/paste-A3F74BCB.png){width="501"}
+
+```{r}
+ya <- -0.5416667
+yb <- -0.6816667 
+a <- 0.05
+a_after_bon <- a/1
+MSE <- 0.16207
+ni <- 6
+nj <- 6
+df <- 25 -4
+(difference <- ya -yb)
+interval <- 1-(a_after_bon/2)
+fordelling <- qt(0.975, df)
+sqroot <- sqrt(MSE*((1/ni)+(1/nj))
+sqrt(MSE*((1/ni)+(1/nj)))
+difference + c(-1, 1)*plus_minus
+
+```
+
+### Post hoc pairwise hypothesis test
+
+![](images/paste-8F193119.png){width="512"}

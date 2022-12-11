@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+output:
+  pdf_document: default
+  html_document: default
+date: '2022-10-26'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](images/paste-5183836A.png)
+
+```{r}
+x <- "168 161 167 179 184 166 198 187 191 179"
+xi <- as.numeric(strsplit(x, " ")[[1]])
+x <- "65.5 58.3 68.1 85.7 80.5 63.4 102.6 91.4 86.7 78.9"
+yi <- as.numeric(strsplit(x, " ")[[1]])
+
+xbar <- mean(xi)
+ybar <- mean(yi)
+
+sxx <- sum((xi - xbar)^2)
+
+B1hat <- sum((yi - ybar)*(xi - xbar)) / sxx
+B0hat <- ybar - B1hat*xbar
+
+print(c(B1hat,B0hat))
+```
+
+![](images/paste-E37626F1.png)
+
+```{r}
+fit <- lm(yi ~ xi)
+
+B0hat <- coef(fit)[1]
+B1hat <- coef(fit)[2]
+
+e <- yi - (B0hat + B1hat*xi)
+RSS <- sum(e^2)
+n <- length(xi)
+df <- n - 2
+
+sigma <- sqrt(RSS / (df))
+sigma.B1 <- sqrt( sigma^2/sxx )
+sigma.B2 <- sqrt( sigma^2/n + sigma^2*xbar^2 / sxx )
+c(sigma, sigma.B1, sigma.B2)
+```
+
+![](images/paste-91FB1BDB.png)
+
+![](images/paste-D0E70AC5.png)
+
+Vi tester: 
+
+![](images/paste-F94E956B.png)
+
+```{r}
+B0 <- coef(fit)["(Intercept)"]
+B1 <- coef(fit)[2]
+
+```
