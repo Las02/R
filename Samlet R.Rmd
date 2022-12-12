@@ -6,6 +6,125 @@ output:
       after_body: anchor.html
 ---
 
+(!) = skal testes om den er true
+
+# 1 sample data
+
+## Which sample size to choose?
+
+### ME - simple men med shortcomings
+
+![](images/paste-A17DF8DA.png)
+
+```{r}
+ME <- 3
+x.sd <- 12.21
+# norm dist
+z.quantile <- qnorm(0.975)
+(n <- ((z.quantile*x.sd)/ME)^2 )
+"so n = 64 if int" 
+```
+
+### Power - advanced men better
+
+![](images/paste-9C46E6FE.png) Manuelt
+
+```{r}
+
+z.quantb <- qnorm(0.80)
+z.quanta <- qnorm(0.975)
+sd <- 12.21
+diff <- 4
+
+(n = (sd* (z.quantb + z.quanta)/diff) ^2 )
+
+
+```
+
+med r direkte
+
+```{r}
+#power: 80% chance for at accep den hvis den er true
+# a = sig.level
+# delta, den diffrence i mean vi vil kunne se forskell på. Relevant fordi vi kigger på difference
+# Den her er mere accurate da den bruge t-dist
+power.t.test(power=0.8, delta=4, sd=12.21, sig.level=0.05, type="one.sample")
+
+```
+
+# two sample data
+
+## CI for difference
+
+![](images/paste-99898A8D.png)
+
+```{r}
+xA <- c(7.53, 7.48, 8.08, 8.09, 10.15, 8.4, 10.88, 6.13, 7.9)
+xB <- c(9.21, 11.51, 12.79, 11.85, 9.97, 8.79, 9.69, 9.68, 9.19)
+
+A.mean <-  mean(xA)
+B.mean <-  mean(xB)
+A.len <- length(xA)
+B.len <- length(xB)
+A.sd <- sd(xA)
+B.sd <- sd(xB)
+
+# df
+v <- ((vs[1]/ns[1]+vs[2]/ns[2])^2)/((vs[1]/ns[1])^2/(ns[1]-1)+(vs[2]/ns[2])^2/(ns[2]-1))
+
+t.quantile <- qt(0.975, v)
+change.t <- sqrt( ((A.sd)^2/A.len) + ((B.sd)^2/B.len) )
+A.mean-B.mean + c(-1,1)*t.quantile*change.t
+c(A.mean,B.mean,t.quantile,change.t)
+```
+
+```{r}
+# Eller direkte
+t.test(xA,xB)
+```
+
+## Welch two sample t-test statistic
+
+![](images/paste-7101A509.png)
+
+![](images/paste-8E79CF8C.png)
+
+```{r}
+xA <- c(7.53, 7.48, 8.08, 8.09, 10.15, 8.4, 10.88, 6.13, 7.9)
+xB <- c(9.21, 11.51, 12.79, 11.85, 9.97, 8.79, 9.69, 9.68, 9.19)
+
+ms=c(mean(xA), mean(xB))
+vs=c(var(xA), var(xB))
+n=c(length(xA), length(xB))
+
+# Test statistic
+tobs <- (ms[2]-ms[1])/sqrt(vs[1]/ns[1]+vs[2]/ns[2])
+
+# Degrees of freedom
+v=((vs[1]/ns[1]+vs[2]/ns[2])^2)/((vs[1]/ns[1])^2/(ns[1]-1)+(vs[2]/ns[2])^2/(ns[2]-1))
+c(tobs,v)
+
+#Pval
+(pval <- 2*(1-pt(tobs, v)) )
+#CritVal
+(critval <- qt(0.975, v))
+```
+
+```{r}
+# Direkte
+t.test(xA, xB)
+```
+
+## Power/sample in two way
+
+```{r}
+#power: 80% chance for at accep den hvis den er true
+# a = sig.level
+# delta, den diffrence i mean vi vil kunne se forskell på. Relevant fordi vi kigger på difference
+# Den her er mere accurate da den bruge t-dist
+power.t.test(power=0.8, delta=4, sd=12.21, sig.level=0.05, type="one.sample")
+```
+
 # One-way anova
 
 ## post hoc comparison
