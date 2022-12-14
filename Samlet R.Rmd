@@ -1,12 +1,14 @@
 ---
 title: "Anchored Links"
 output:
+  html_document:
+    df_print: paged
   pdf_document: default
 ---
 
 (!) = skal testes om den er true
 
-! = mangler eksempel
+! = mangler eksempel![](images/paste-D59091A9.png)
 
 ```{r}
 x <- "3.7 1.9 4.8 11.7 2.8 4.7 2.7 4.9 6.7 3.8"
@@ -17,19 +19,47 @@ lifetime <- as.numeric(strsplit(x, " ")[[1]])
 
 ## CI
 
+![](images/paste-451CE418.png)
+
+```{r}
+n <- 22
+mu <- 0
+mean <- -0.1181818
+sd <- 0.05884899
+
+qt_scale <- qt(0.975, n-1) * sd/sqrt(n)
+mean + c(-1,1)*qt_scale
+
+```
+
+## pval
+
+```{r}
+n <- 14
+mu <- 0
+mean <- 367.2
+sd <- 571.5
+tobs <- (mean-mu)/(sd/sqrt(n))
+2*(1-pt(tobs, n-1))
+```
+
+## CI for var/sd
+
 ![](images/paste-0604CCE6.png)
 
 ```{r}
-x <- c(168, 161, 167, 179, 184, 166, 198, 187, 191, 179)
-n <- length(x)
-s <- sd(x)
-chi <- qchisq(c(0.025, 0.975),n-1)
+n <- 22
+mu <- 0
+mean <- -0.1181818
+s <- 0.05884899
+
+chiout <- qchisq(0.975, n-1)
+chiin <- qchisq(0.025, n-1)
 #var
-var_ci <- (n-1)*(s^2) * chi^-1
+var_ci <- (n-1)*(s^2) * c(chiout^-1,chiin^-1)
+
 #sd
 sd_ci <- sqrt(var_ci)
-
-var_ci
 sd_ci
 ```
 
@@ -156,6 +186,19 @@ power.t.test(power=0.90, delta=2, sd=1, sig.level=0.05)
 
 ```
 
+## Pooled varance/sd
+
+![](images/paste-F8EA18F8.png)
+
+```{r}
+v1 <- 1.8^2
+n1 <- 20
+v2 <- 1.4^2
+n2 <- 30
+var <- ((n1-1)*v1+(n2-1)*v2) / (n1 + n2 -2)
+sigma <- sqrt(var)
+```
+
 # anova test
 
 ## One-way anova
@@ -254,6 +297,45 @@ pval <- 2* (1- pt(t.obs, df))
 
 testen laves som pval = 1-pf(fobs, l-1, (k-1)(l-1)
 
+## Anova test
+
+```{r}
+y <- c(3.5, 3.0, 5.4, 7.2,
+       7.7, 9.0, 7.0, 6.0,
+       0.4, 1.1, 1.0, 1.8)
+treatm <- as.factor(c(1, 1, 1, 1,
+                      2, 2, 2, 2,
+                      3, 3, 3, 3))
+block <- as.factor(c(1, 2, 3, 4,
+                     1, 2, 3, 4,
+                     1, 2, 3, 4))
+
+fit <- lm(y ~ treatm + block)
+anova(fit)
+```
+
+## Find sd
+
+![](images/paste-2E61D30A.png)
+
+## estimation of parameters
+
+![](images/paste-56E3488B.png)
+
+```{r}
+y <- c(3.5, 3.0, 5.4, 7.2,
+       7.7, 9.0, 7.0, 6.0,
+       0.4, 1.1, 1.0, 1.8)
+treatm <- as.factor(c(1, 1, 1, 1,
+                      2, 2, 2, 2,
+                      3, 3, 3, 3))
+block <- as.factor(c(1, 2, 3, 4,
+                     1, 2, 3, 4,
+                     1, 2, 3, 4))
+tapply(y, block, mean)
+3.866667-mean(y)
+```
+
 # PROPORTION analysis
 
 ## 1 population proportion analysis
@@ -304,6 +386,13 @@ prop.test(518,1154,correct = FALSE)
 
 ![](images/paste-976A83CA.png)
 
+```{r}
+p <- 0.04
+ME <- 0.01
+(n=p*(1-p)*(qnorm(0.975)/ME)^2)
+
+```
+
 ## Two proportions
 
 ### CI og sd/var !
@@ -312,12 +401,30 @@ prop.test(518,1154,correct = FALSE)
 
 ![](images/paste-8CDDC557.png)
 
+```{r}
+p1 <- 26/189
+p2 <- 11/157
+n1 <- 189
+n2 <- 157
+sigma_p1_p2 <- sqrt( (p1*(1-p1)/n1) + (p2*(1-p2)/n2) )
+
+p1-p2 + c(-1,1)*sigma_p1_p2*qnorm(0.975)
+```
+
 ### Hypothesis test !
 
 ![](images/paste-4504BCB5.png)
 
 ```{r}
+x1 <- 31+36
+x2 <- 31+30
+n1 <- 189
+n2 <- 175
+p <- (x1+x2)/(n1+n2)
+p1 <- x1/n1
+p2 <- x2/n2
 
+zobs <- (p1-p2)/sqrt(p*(1-p)*(1/n1+1/n2))
 ```
 
 ```{r}
@@ -348,11 +455,44 @@ chi$expected
 
 ![](images/paste-34772F7F.png)
 
+```{r}
+mat <- matrix(c(24, 21, 14,
+                12, 15, 22,
+                15, 26, 24), ncol = 3, byrow = TRUE)
+colnames(mat) <- c("Low","Medium","High")
+rownames(mat) <- c("A","B","C")
+
+mat <- as.data.frame(mat)
+
+test <- chisq.test(mat, correct = FALSE)
+test$expected
+```
+
+Her er contribution af en
+
+```{r}
+e <- 344*189/662
+o <- 96
+(e-o)^2 / e
+
+```
+
 # Simulation methods
 
 ## Bootstrapping
 
 # normal LR
+
+### CI for parametre
+
+![](images/paste-22C572C1.png)
+
+```{r}
+B1 <- 23.25
+tquant <- qt(0.975, 18)
+B1.sigma <- 1.74
+B1 + c(-1,1)*tquant*B1.sigma
+```
 
 ![](images/paste-1FCEFCDC.png) ![](images/paste-121987EA.png)
 
