@@ -191,7 +191,7 @@ vs=c(var(xA), var(xB))
 ns=c(length(xA), length(xB))
 
 # Test statistic
-tobs <- tobs <- (ms[1]-ms[2])/sqrt(vs[1]/ns[1]+vs[2]/ns[2])
+tobs <- (ms[1]-ms[2])/sqrt(vs[1]/ns[1]+vs[2]/ns[2])
 tobs
 
 # Degrees of freedom
@@ -273,7 +273,7 @@ df <- n-k
 a <- 0.05/1
 mse <- 0.16207
 
-mean.dif <- an - bn
+mean.dif <- a.mean - b.mean
 
 t.quant <- qt(1-(a/2), df)
 inner <- mse * ((1/an) + (1/an))
@@ -379,7 +379,37 @@ tapply(y, block, mean)
 
 ![](images/paste-2529B705.png)
 
-# PROPORTION analysis
+```{r}
+rm(list = ls())
+a.mean <- 0.479
+b.mean <- 0.568
+
+an <- 8
+bn <- 8
+k <- 8
+l <- 2
+df <- (k-1)*(l-1)
+
+a <- 0.05/1
+mse <- 0.0043777
+
+mean.dif <- a.mean - b.mean
+
+t.quant <- qt(1-(a/2), df)
+inner <- mse * ((1/an) + (1/an))
+scale <- sqrt(inner)
+
+mean.dif + c(-1,1)*t.quant*scale
+
+```
+
+## Expected value
+
+![](images/paste-E8F95951.png)
+
+![](images/paste-40DC8F56.png)
+
+# ![](images/paste-B8F0F74C.png)PROPORTION analysis
 
 ## 1 population proportion analysis
 
@@ -445,13 +475,19 @@ ME <- 0.01
 ![](images/paste-8CDDC557.png)
 
 ```{r}
-p1 <- 26/189
-p2 <- 11/157
-n1 <- 189
-n2 <- 157
+
+# antal som p1 og p2 er prop af
+n1 <- 80
+n2 <- 90
+
+# p1 og p2
+p1<- 35/n1
+p2 <- 23/n2
+
 sigma_p1_p2 <- sqrt( (p1*(1-p1)/n1) + (p2*(1-p2)/n2) )
 
 p1-p2 + c(-1,1)*sigma_p1_p2*qnorm(0.975)
+
 ```
 
 ### Hypothesis test !
